@@ -1120,7 +1120,7 @@ namespace BambooHrClient
 
         public async Task<BambooHrUser[]> GetUsers()
         {
-            const string url = "/meta/users/";
+            const string url = "/employees/directory";
 
             var request = GetNewRestRequest(url, Method.GET, true);
 
@@ -1144,7 +1144,8 @@ namespace BambooHrClient
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 if (response.Data != null)
-                    return response.Data.ToArray();
+                    return response.Content.FromJson<BambooHrUser[]>().ToArray<BambooHrUser>();
+                    //return response.Data.ToArray();
 
                 throw new Exception("Bamboo Response does not contain data");
             }

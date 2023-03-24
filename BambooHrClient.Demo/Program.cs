@@ -75,6 +75,8 @@ namespace BambooHrClient.Demo
             await DisplayWhosOut();
             Console.WriteLine();
 
+            await DisplayUsers();
+            Console.WriteLine();
 
             //await DownloadEmployeePhoto(employeeId);
             //Console.WriteLine();
@@ -106,10 +108,6 @@ namespace BambooHrClient.Demo
 
             //await DisplayTimeOffPolicies();
             //Console.WriteLine();
-
-            //await DisplayUsers();
-            //Console.WriteLine();
-
 
             //await DisplayLastChangedInfo();
             //Console.WriteLine();
