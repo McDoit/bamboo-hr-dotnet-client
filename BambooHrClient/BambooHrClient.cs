@@ -1144,8 +1144,14 @@ namespace BambooHrClient
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 if (response.Data != null)
-                    return response.Content.FromJson<BambooHrUser[]>().ToArray<BambooHrUser>();
+                {
+                    await Console.Out.WriteLineAsync(response.Content.ToString());
+                    await Console.Out.WriteLineAsync();
+                    return null;
+                    //return response.Content.FromJson<BambooHrUser[]>().ToArray<BambooHrUser>();
                     //return response.Data.ToArray();
+
+                }
 
                 throw new Exception("Bamboo Response does not contain data");
             }

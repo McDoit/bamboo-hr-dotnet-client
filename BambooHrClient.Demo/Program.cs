@@ -371,10 +371,10 @@ namespace BambooHrClient.Demo
 
             var users = await bambooHrClient.GetUsers();
 
-            foreach (var user in users)
-            {
-                Console.WriteLine(user.PropsToString());
-            }
+            //foreach (var user in users)
+            //{
+            //    Console.WriteLine(user.PropsToString());
+            //}
         }
 
         public async static Task DisplayLastChangedInfo()
