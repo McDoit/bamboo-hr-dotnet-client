@@ -1,10 +1,12 @@
-﻿using RestSharp.Deserializers;
-using RestSharp.Serializers;
+﻿using RestSharp.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
 using RestSharp;
+using RestSharp.Serializers.Xml;
+using System.Xml.Serialization;
+using System.Linq;
 
 namespace BambooHrClient.Models
 {
@@ -17,7 +19,11 @@ namespace BambooHrClient.Models
         public string Multiple { get; set; }
         public string Name { get; set; }
 
+        [XmlIgnore]
         public List<BambooHrListFieldOption> Options { get; set; }
+
+        [XmlArray("Options")]
+        public BambooHrListFieldOption[] FilteredOptions => Options?.Where(w  => !String.IsNullOrWhiteSpace(w.Value)).ToArray();
 
         /// <summary>
         /// Parameterless constructor for XML deserialization.
@@ -30,22 +36,22 @@ namespace BambooHrClient.Models
 
     public class BambooHrListFieldOptionSerializer : ISerializer
     {
-        public string ContentType { get; set; }
+        public ContentType ContentType { get; set; }
         public string DateFormat { get; set; }
         public string Namespace { get; set; }
         public string RootElement { get; set; }
 
         public BambooHrListFieldOptionSerializer()
         {
-            ContentType = "text/xml";
+            ContentType = ContentType.Xml;
         }
 
         public string Serialize(object obj)
         {
             var list = obj as List<BambooHrListFieldOption>;
-
+            
             if (list == null)
-                return new XmlSerializer().Serialize(obj);
+                return new DotNetXmlSerializer().Serialize(obj);
 
             var stringBuilder = new StringBuilder();
 
