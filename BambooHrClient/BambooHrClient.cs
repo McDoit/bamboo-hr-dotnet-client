@@ -13,6 +13,7 @@ using RestSharp.Serializers.Xml;
 using System.Security.Cryptography;
 using RestSharp.Serializers.NewtonsoftJson;
 using Newtonsoft.Json.Linq;
+using BambooHrClient.Extensions;
 
 namespace BambooHrClient
 {
@@ -46,6 +47,8 @@ namespace BambooHrClient
         Task<BambooHrTimeOffTypeInfo> GetTimeOffTypes(string mode = "");
         Task<BambooHrTimeOffPolicy[]> GetTimeOffPolicies();
         Task<BambooHrUser[]> GetUsers();
+
+        Task<BambooHrEmployeeChangedInfos> GetLastChangedInfos(DateTime lastChanged, string type = "");
 
         Task<BambooHrEmployeeChangedInfo[]> GetLastChangedInfo(DateTime lastChanged, string type = "");
         Task<BambooHrReport<T>> GetReport<T>(int reportId);
@@ -92,21 +95,23 @@ namespace BambooHrClient
     <note>{2}</note>
 </history>";
 
-        private readonly IRestClient _iRestClient;
+        private readonly IRestClient _restClient;
+        private readonly IBambooHrClientConfig _config;
 
-        public BambooHrClient()
+        public BambooHrClient(IBambooHrClientConfig config)
         {
-            var options = new RestClientOptions(Config.BambooApiUrl)
+            var options = new RestClientOptions(config.BambooApiUrl)
             {
-                Authenticator = new HttpBasicAuthenticator(Config.BambooApiKey, "x")
+                Authenticator = new HttpBasicAuthenticator(config.BambooApiKey, "x")
             };
 
-            _iRestClient = new RestClient(options, configureSerialization: s => s.UseXmlSerializer().UseNewtonsoftJson());
+            _restClient = new RestClient(options, configureSerialization: s => s.UseXmlSerializer().UseNewtonsoftJson());
+            _config = config;
         }
 
-        public BambooHrClient(IRestClient iRestClient)
+        public BambooHrClient(IRestClient restClient)
         {
-            _iRestClient = iRestClient;
+            _restClient = restClient;
         }
 
         public Task<List<Dictionary<string, string>>> GetTabularData(string employeeId, BambooHrTableType tableType)
@@ -157,7 +162,7 @@ namespace BambooHrClient
 
             try
             {
-                response = await _iRestClient.ExecuteAsync(request);
+                response = await _restClient.ExecuteAsync(request);
             }
             catch (Exception ex)
             {
@@ -189,58 +194,13 @@ namespace BambooHrClient
             throw new Exception($"Bamboo Response threw error code {response.StatusCode} ({response.StatusDescription}) {response.GetBambooHrErrorMessage()} in {nameof(AddEmployee)}");
         }
 
-        public async Task<BambooHrEmployee> GetEmployeeOld(int employeeId, params string[] fieldNames)
-        {
-            var url = "/employees/" + employeeId;
-
-            var request = GetNewRestRequest(url, Method.Get, true);
-
-            if(fieldNames?.Any() == true)
-            {
-                request.AddQueryParameter("fields", String.Join(",", fieldNames));
-            }
-
-            RestResponse<BambooHrEmployee> response;
-
-            try
-            {
-                response = await _iRestClient.ExecuteAsync<BambooHrEmployee>(request);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(string.Format("Error executing Bamboo request to {0} for employee ID {1}", url, employeeId), ex);
-            }
-
-            if (response.ErrorException != null)
-                throw new Exception(string.Format("Error executing Bamboo request to {0} for employee ID {1}", url, employeeId), response.ErrorException);
-
-            if (string.IsNullOrWhiteSpace(response.Content))
-                throw new Exception(string.Format("Empty Response to Request from BambooHR, Code: {0} and employee id {1}", response.StatusCode, employeeId));
-
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                //var raw = response.Content.Replace("Date\":\"0000-00-00\"", "Date\":null").RemoveTroublesomeCharacters();
-                //var package = raw.FromJson<BambooHrEmployee>();
-
-                if (response.Data != null)
-                {
-                    return response.Data;
-                }
-
-                throw new Exception("Bamboo Response does not contain Employee");
-            }
-
-            throw new Exception($"Bamboo Response threw error code {response.StatusCode} ({response.StatusDescription}) {response.GetBambooHrErrorMessage()} in {nameof(GetEmployee)}");
-        }
-
-
         public async Task<T> GetDataResponse<T>(RestRequest restRequest)
         {
             RestResponse<T> response;
 
             try
             {
-                response = await _iRestClient.ExecuteAsync<T>(restRequest);
+                response = await _restClient.ExecuteAsync<T>(restRequest);
             }
             catch (Exception ex)
             {
@@ -310,7 +270,7 @@ namespace BambooHrClient
 
             try
             {
-                response = await _iRestClient.ExecuteAsync(request);
+                response = await _restClient.ExecuteAsync(request);
             }
             catch (Exception ex)
             {
@@ -354,7 +314,7 @@ namespace BambooHrClient
 
             try
             {
-                response = await _iRestClient.ExecuteAsync(request);
+                response = await _restClient.ExecuteAsync(request);
             }
             catch (Exception ex)
             {
@@ -389,7 +349,7 @@ namespace BambooHrClient
         public string GetEmployeePhotoUrl(string employeeEmail)
         {
             var hashedEmail = Hash(employeeEmail);
-            var url = string.Format(Config.BambooCompanyUrl + "/employees/photos/?h={0}", hashedEmail);
+            var url = string.Format(_config.BambooCompanyUrl + "/employees/photos/?h={0}", hashedEmail);
 
             return url;
         }
@@ -416,7 +376,7 @@ namespace BambooHrClient
 
             try
             {
-                response = await _iRestClient.ExecuteAsync(request);
+                response = await _restClient.ExecuteAsync(request);
             }
             catch (Exception ex)
             {
@@ -502,7 +462,7 @@ namespace BambooHrClient
 
             try
             {
-                response = await _iRestClient.ExecuteAsync(request);
+                response = await _restClient.ExecuteAsync(request);
             }
             catch (Exception ex)
             {
@@ -550,7 +510,7 @@ namespace BambooHrClient
 
             try
             {
-                response = await _iRestClient.ExecuteAsync(request);
+                response = await _restClient.ExecuteAsync(request);
             }
             catch (Exception ex)
             {
@@ -611,7 +571,7 @@ namespace BambooHrClient
 
             try
             {
-                response = await _iRestClient.ExecuteAsync(request);
+                response = await _restClient.ExecuteAsync(request);
             }
             catch (Exception ex)
             {
@@ -735,7 +695,7 @@ namespace BambooHrClient
 
             try
             {
-                response = await _iRestClient.ExecuteAsync<BambooHrListField>(request);
+                response = await _restClient.ExecuteAsync<BambooHrListField>(request);
             }
             catch (Exception ex)
             {
@@ -802,7 +762,7 @@ namespace BambooHrClient
             return GetDataResponse<BambooHrUser[]>(request);
         }
 
-        public Task<BambooHrEmployeeChangedInfo[]> GetLastChangedInfo(DateTime lastChanged, string type = "")
+        public Task<BambooHrEmployeeChangedInfos> GetLastChangedInfos(DateTime lastChanged, string type = "")
         {
             const string url = "/employees/changed/";
 
@@ -815,7 +775,14 @@ namespace BambooHrClient
                 request.AddParameter("type", type, ParameterType.GetOrPost);
             }
 
-            return GetDataResponse<BambooHrEmployeeChangedInfo[]>(request);
+            return GetDataResponse<BambooHrEmployeeChangedInfos>(request);
+        }
+
+        public async Task<BambooHrEmployeeChangedInfo[]> GetLastChangedInfo(DateTime lastChanged, string type = "")
+        {
+            var response = await GetLastChangedInfos(lastChanged, type);
+
+            return response.Employees.Values.ToArray();
         }
 
         private Dictionary<DateTime, int> GetDateHours(DateTime startDate, DateTime endDate, bool startHalfDay, bool endHalfDay, List<DateTime> holidays)

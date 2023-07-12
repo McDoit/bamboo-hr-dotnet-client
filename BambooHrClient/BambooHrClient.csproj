@@ -5,18 +5,29 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyTitle>BambooHrClient</AssemblyTitle>
     <Product>BambooHrClient</Product>
-    <Copyright>Copyright ©  2015</Copyright>
+    <Copyright>Copyright ©  2023</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
+	<RootNamespace>McDoit.BambooHrClient</RootNamespace>
+	<AssemblyName>McDoit.BambooHrClient</AssemblyName>
+	<LangVersion>latest</LangVersion>
   </PropertyGroup>
+	
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
+	<PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="110.2.0" />
     <PackageReference Include="RestSharp.Serializers.Xml" Version="110.2.0" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="RestSharp" Version="110.2.0" />
-  </ItemGroup>
+
+	<PropertyGroup>
+		<PackageId>McDoit.BambooHrClient</PackageId>
+		<Version>0.0.1</Version>
+		<Authors>McDoit</Authors>
+		<RepositoryUrl>https://github.com/McDoit/bamboo-hr-dotnet-client</RepositoryUrl>
+		<PackageTags>bamboohr sdk</PackageTags>
+		<Description>
+			Based on https://github.com/jbubriski/bamboo-hr-dotnet-client this package provides a SDK for the BambooHr API using RestSharp
+		</Description>
+	</PropertyGroup>
 </Project>

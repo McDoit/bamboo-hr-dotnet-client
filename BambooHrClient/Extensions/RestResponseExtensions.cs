@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace BambooHrClient
 {
-    public static class IRestResponseExtensions
+    public static class RestResponseExtensions
     {
         private static readonly string _bambooHrErrorMessageHeaderName = "X-BambooHR-Error-Message";
 
