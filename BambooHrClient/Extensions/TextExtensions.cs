@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using Newtonsoft.Json;
 
-namespace BambooHrClient
+namespace BambooHrClient.Extensions
 {
     public static class TextExtensions
     {
@@ -35,7 +35,7 @@ namespace BambooHrClient
                 ch = t;
                 // remove any characters outside the valid UTF-8 range as well as all control characters
                 // except tabs and new lines
-                if ((ch < 0x00FD && ch > 0x001F) || ch == '\t' || ch == '\n' || ch == '\r')
+                if (ch < 0x00FD && ch > 0x001F || ch == '\t' || ch == '\n' || ch == '\r')
                 {
                     newString.Append(ch);
                 }

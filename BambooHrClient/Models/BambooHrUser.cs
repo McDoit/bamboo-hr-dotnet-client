@@ -1,8 +1,15 @@
-﻿using RestSharp.Deserializers;
+﻿using RestSharp.Serializers;
 using System;
+using System.Collections.Generic;
 
 namespace BambooHrClient.Models
 {
+    public class BambooHrDirectory
+    {
+        public List<BambooHrField> Fields { get; set; }
+        public List<BambooHrUser> Employees { get; set; }
+    }
+
     [DeserializeAs(Name = "User")]
     public class BambooHrUser
     {

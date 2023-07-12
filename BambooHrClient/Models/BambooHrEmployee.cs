@@ -1,21 +1,20 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using RestSharp.Serializers;
+using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BambooHrClient.Models
 {
-    public class DirectoryResponse
-    {
-        public List<BambooHrEmployee> Employees { get; set; }
-    }
-
     [XmlType(TypeName = "employee")]
     public class BambooHrEmployee
     {
         public int Id { get; set; }
 
-        public DateTime LastChanged { get; set; }
+        public DateTime? LastChanged { get; set; }
 
         public string Status { get; set; }
 
@@ -25,7 +24,7 @@ namespace BambooHrClient.Models
         public string Nickname { get; set; }
         public string DisplayName { get; set; }
         public string Gender { get; set; }
-        public string DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public int Age { get; set; }
 
         public string Address1 { get; set; }
@@ -49,10 +48,32 @@ namespace BambooHrClient.Models
         public string Location { get; set; }
         public string Division { get; set; }
 
-        public string TerminationDate { get; set; }
+        public DateTime? TerminationDate { get; set; }
 
+        public string Supervisor { get; set; }
         public string SupervisorId { get; set; }
-        public string SupervisorEid { get; set; }
+        public int? SupervisorEid { get; set; }
+        public string SupervisorEmail { get; set; }
+
+        public string PaidPer { get; set; }
+        public string PayChangeReason { get; set; }
+        public string PayFrequency { get; set; }
+        public int? PayGroupId { get; set; }
+        public string PayRate { get; set; }
+        public DateTime? PayRateEffectiveDate { get; set; }
+        public string PaySchedule { get; set; }
+        public int? PayScheduleId { get; set; }
+        public string PayType { get; set; }
+
+        public string CommissionAmount { get; set; }
+        public string CommissionComment { get; set; }
+        public DateTime? CommissionDate { get; set; }
+
+        public string BonusAmount { get; set; }
+        public string BonusComment { get; set; }
+        public string BonusReason { get; set; }
+        public DateTime? BonusDate { get; set; }
+
 
         public string LastFirst
         {
@@ -85,7 +106,7 @@ namespace BambooHrClient.Models
             xElement.AddFieldValueIfNotNull("firstName", FirstName);
             xElement.AddFieldValueIfNotNull("middleName", MiddleName);
             xElement.AddFieldValueIfNotNull("lastName", LastName);
-            xElement.AddFieldValueIfNotNull("nickname", Nickname);
+            xElement.AddFieldValueIfNotNull("nickname", Nickname); //?
             xElement.AddFieldValueIfNotNull("displayName", DisplayName);
             xElement.AddFieldValueIfNotNull("gender", Gender);
             xElement.AddFieldValueIfNotNull("dateOfBirth", DateOfBirth);
@@ -112,10 +133,95 @@ namespace BambooHrClient.Models
 
             xElement.AddFieldValueIfNotNull("terminationDate", TerminationDate);
 
+            xElement.AddFieldValueIfNotNull("supervisor", Supervisor);
             xElement.AddFieldValueIfNotNull("supervisorId", SupervisorId);
             xElement.AddFieldValueIfNotNull("supervisorEid", SupervisorEid);
+            xElement.AddFieldValueIfNotNull("supervisorEmail", SupervisorEmail);
 
             return xElement.ToString();
         }
-    }
+
+        public static string[] FieldNames = new[] 
+        {
+            "acaStatusCategory",
+            "address1",
+            "address2",
+            "age",
+            "bestEmail",
+            "birthday",
+            "bonusAmount",
+            "bonusComment",
+            "bonusDate",
+            "bonusReason",
+            "city",
+            "commissionAmount",
+            "commissionComment",
+            "commissionDate",
+            "commisionDate",
+            "country",
+            "createdByUserId",
+            "dateOfBirth",
+            "department",
+            "division",
+            "eeo",
+            "employeeNumber",
+            "employmentHistoryStatus",
+            "ethnicity",
+            "exempt",
+            "firstName",
+            "fullName1",
+            "fullName2",
+            "fullName3",
+            "fullName4",
+            "fullName5",
+            "displayName",
+            "gender",
+            "hireDate",
+            "originalHireDate",
+            "homeEmail",
+            "homePhone",
+            "id",
+            "isPhotoUploaded",
+            "jobTitle",
+            "lastChanged",
+            "lastName",
+            "location",
+            "maritalStatus",
+            "middleName",
+            "mobilePhone",
+            "nationalId",
+            "nationality",
+            "nin",
+            "paidPer",
+            "payChangeReason",
+            "payGroup",
+            "payGroupId",
+            "payRate",
+            "payRateEffectiveDate",
+            "payType",
+            "paidPer",
+            "paySchedule",
+            "payScheduleId",
+            "payFrequency",
+            "includeInPayroll",
+            "timeTrackingEnabled",
+            "preferredName",
+            "ssn",
+            "sin",
+            "standardHoursPerWeek",
+            "state",
+            "stateCode",
+            "status",
+            "supervisor",
+            "supervisorId",
+            "supervisorEId",
+            "supervisorEmail",
+            "terminationDate",
+            "workEmail",
+            "workPhone",
+            "workPhonePlusExtension",
+            "workPhoneExtension",
+            "zipcode"
+        };
+}
 }

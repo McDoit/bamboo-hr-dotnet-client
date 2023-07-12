@@ -1,4 +1,4 @@
-﻿using RestSharp.Deserializers;
+﻿using RestSharp.Serializers;
 using System.Collections.Generic;
 
 namespace BambooHrClient.Models
