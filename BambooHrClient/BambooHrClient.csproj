@@ -15,9 +15,9 @@
 	
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
-	<PackageReference Include="RestSharp" Version="110.2.0" />
-    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="110.2.0" />
-    <PackageReference Include="RestSharp.Serializers.Xml" Version="110.2.0" />
+	  <PackageReference Include="RestSharp" Version="109.0.0" />
+    <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="109.0.0" />
+    <PackageReference Include="RestSharp.Serializers.Xml" Version="109.0.0" />
   </ItemGroup>
 
 	<PropertyGroup>
