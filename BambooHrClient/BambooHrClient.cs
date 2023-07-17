@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,47 +14,11 @@ using RestSharp.Authenticators;
 using RestSharp.Serializers.Xml;
 using System.Security.Cryptography;
 using RestSharp.Serializers.NewtonsoftJson;
-using Newtonsoft.Json.Linq;
 using BambooHrClient.Extensions;
+using System.Net.Http;
 
 namespace BambooHrClient
 {
-    public interface IBambooHrClient
-    {
-        Task<List<BambooHrEmployee>> GetEmployees(bool onlyCurrent = true);
-
-        Task<List<Dictionary<string, string>>> GetTabularData(string employeeId, BambooHrTableType tableType);
-
-        Task<List<BambooHrTimeOffRequest>> GetTimeOffRequests(int employeeId);
-        Task<BambooHrTimeOffRequest> GetTimeOffRequest(int timeOffRequestId);
-        Task<int> CreateTimeOffRequest(int employeeId, int timeOffTypeId, DateTime startDate, DateTime endDate, bool startHalfDay = false, bool endHalfDay = false, string comment = null, List<DateTime> holidays = null, int? previousTimeOffRequestId = null);
-        Task<bool> CancelTimeOffRequest(int timeOffRequestId, string reason = null);
-        Task<List<BambooHrAssignedTimeOffPolicy>> GetAssignedTimeOffPolicies(int employeeId);
-        Task<List<BambooHrEstimate>> GetFutureTimeOffBalanceEstimates(int employeeId, DateTime? endDate = null);
-        Task<List<BambooHrWhosOutInfo>> GetWhosOut(DateTime? startDate = null, DateTime? endDate = null);
-        Task<List<BambooHrHoliday>> GetHolidays(DateTime startDate, DateTime endDate);
-
-        Task<string> AddEmployee(BambooHrEmployee bambooHrEmployee);
-        Task<BambooHrEmployee> GetEmployee(int employeeId, params string[] fieldNames);
-        Task<bool> UpdateEmployee(BambooHrEmployee bambooHrEmployee);
-
-        Task<Byte[]> GetEmployeePhoto(int employeeId, string size = "small");
-        string GetEmployeePhotoUrl(string employeeEmail);
-        Task<bool> UploadEmployeePhoto(int employeeId, byte[] binaryData, string fileName);
-
-        Task<BambooHrField[]> GetFields();
-        Task<BambooHrTable[]> GetTabularFields();
-        Task<List<BambooHrListField>> GetListFieldDetails();
-        Task<BambooHrListField> AddOrUpdateListValues(int listId, List<BambooHrListFieldOption> values);
-        Task<BambooHrTimeOffTypeInfo> GetTimeOffTypes(string mode = "");
-        Task<BambooHrTimeOffPolicy[]> GetTimeOffPolicies();
-        Task<BambooHrUser[]> GetUsers();
-
-        Task<BambooHrEmployeeChangedInfos> GetLastChangedInfos(DateTime lastChanged, string type = "");
-
-        Task<BambooHrEmployeeChangedInfo[]> GetLastChangedInfo(DateTime lastChanged, string type = "");
-        Task<BambooHrReport<T>> GetReport<T>(int reportId);
-    }
 
     public class BambooHrClient : IBambooHrClient
     {
@@ -95,23 +61,25 @@ namespace BambooHrClient
     <note>{2}</note>
 </history>";
 
-        private readonly IRestClient _restClient;
+        private readonly RestClient _restClient;
         private readonly IBambooHrClientConfig _config;
 
         public BambooHrClient(IBambooHrClientConfig config)
         {
+            _config = config ?? throw new ArgumentNullException(nameof(config));
+
             var options = new RestClientOptions(config.BambooApiUrl)
             {
                 Authenticator = new HttpBasicAuthenticator(config.BambooApiKey, "x")
             };
 
             _restClient = new RestClient(options, configureSerialization: s => s.UseXmlSerializer().UseNewtonsoftJson());
-            _config = config;
         }
 
-        public BambooHrClient(IRestClient restClient)
+        public BambooHrClient(RestClient restClient, IBambooHrClientConfig config)
         {
-            _restClient = restClient;
+            _restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
+            _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
         public Task<List<Dictionary<string, string>>> GetTabularData(string employeeId, BambooHrTableType tableType)
@@ -228,6 +196,11 @@ namespace BambooHrClient
 
         public Task<BambooHrEmployee> GetEmployee(int employeeId, params string[] fieldNames)
         {
+            return GetEmployee<BambooHrEmployee>(employeeId, fieldNames);
+        }
+
+        public Task<T> GetEmployee<T>(int employeeId, params string[] fieldNames) where T : BambooHrEmployee
+        {
             var url = "/employees/" + employeeId;
 
             var request = GetNewRestRequest(url, Method.Get, true);
@@ -237,8 +210,9 @@ namespace BambooHrClient
                 request.AddQueryParameter("fields", String.Join(",", fieldNames));
             }
 
-            return GetDataResponse<BambooHrEmployee>(request);
+            return GetDataResponse<T>(request);
         }
+
 
         public Task<BambooHrReport<T>> GetReport<T>(int reportId)
         {
@@ -628,7 +602,6 @@ namespace BambooHrClient
         }
 
         // See inner todo regarding this pragma
-#pragma warning disable 1998
         public Task<List<BambooHrHoliday>> GetHolidays(DateTime startDate, DateTime endDate)
         {
             const string url = "/time_off/holidays/";
@@ -640,7 +613,6 @@ namespace BambooHrClient
             
             return GetDataResponse<List<BambooHrHoliday>>(request);
         }
-#pragma warning restore 1998
 
         public string GetDatesXml(DateTime startDate, DateTime endDate, bool startHalfDay, bool endHalfDay, List<DateTime> holidays)
         {
@@ -820,6 +792,9 @@ namespace BambooHrClient
             return dateHours;
         }
 
+        public Func<HttpResponseMessage, ValueTask>? OnAfterRequest { get; set; }
+
+
         private RestRequest GetNewRestRequest(string url, Method method, bool sendingJson, bool binary = false)
         {
             var request = new RestRequest(url, method);
@@ -840,13 +815,14 @@ namespace BambooHrClient
                 request.AddHeader("Content-Type", "text/xml");
             }
 
-            request.OnBeforeDeserialization = bs => bs.Content = bs.Content.Replace("\":\"0000-00-00\"", "\":null").RemoveTroublesomeCharacters();
-            request.OnAfterRequest = ar => 
-            {
-                var contentString = ar?.Content.ReadAsStringAsync().ContinueWith(s => Console.WriteLine(s.Result));
-                
-                return new ValueTask(contentString);
-            };
+            request.OnBeforeDeserialization = bs => bs.Content = bs.Content?.Replace("\":\"0000-00-00\"", "\":null").RemoveTroublesomeCharacters();
+            //request.OnAfterRequest = ar =>
+            //{
+            //    var contentString = ar?.Content.ReadAsStringAsync().ContinueWith(s => Console.WriteLine(s.Result));
+
+            //    return new ValueTask(contentString);
+            //};
+            request.OnAfterRequest = OnAfterRequest;
 
 
             return request;

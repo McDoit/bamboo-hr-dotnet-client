@@ -22,7 +22,7 @@
 
 	<PropertyGroup>
 		<PackageId>McDoit.BambooHrClient</PackageId>
-		<Version>0.0.1</Version>
+		<Version>0.0.8</Version>
 		<Authors>McDoit</Authors>
 		<RepositoryUrl>https://github.com/McDoit/bamboo-hr-dotnet-client</RepositoryUrl>
 		<PackageTags>bamboohr sdk</PackageTags>

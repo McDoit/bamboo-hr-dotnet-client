@@ -22,6 +22,7 @@ namespace BambooHrClient.Models
         public string MiddleName { get; set; }
         public string LastName { get; set; }
         public string Nickname { get; set; }
+        public string PreferredName { get; set; }
         public string DisplayName { get; set; }
         public string Gender { get; set; }
         public DateTime? DateOfBirth { get; set; }
@@ -48,12 +49,14 @@ namespace BambooHrClient.Models
         public string Location { get; set; }
         public string Division { get; set; }
 
+        public DateTime HireDate { get; set; }
         public DateTime? TerminationDate { get; set; }
 
         public string Supervisor { get; set; }
         public string SupervisorId { get; set; }
         public int? SupervisorEid { get; set; }
         public string SupervisorEmail { get; set; }
+
 
         public string PaidPer { get; set; }
         public string PayChangeReason { get; set; }
@@ -181,6 +184,7 @@ namespace BambooHrClient.Models
             "homeEmail",
             "homePhone",
             "id",
+            "includeInPayroll",
             "isPhotoUploaded",
             "jobTitle",
             "lastChanged",
@@ -203,8 +207,6 @@ namespace BambooHrClient.Models
             "paySchedule",
             "payScheduleId",
             "payFrequency",
-            "includeInPayroll",
-            "timeTrackingEnabled",
             "preferredName",
             "ssn",
             "sin",
@@ -217,6 +219,7 @@ namespace BambooHrClient.Models
             "supervisorEId",
             "supervisorEmail",
             "terminationDate",
+            "timeTrackingEnabled",
             "workEmail",
             "workPhone",
             "workPhonePlusExtension",
