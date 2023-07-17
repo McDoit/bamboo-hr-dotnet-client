@@ -25,7 +25,7 @@ namespace BambooHrClient
             var fieldElement = new XElement("field");
 
             fieldElement.Add(new XAttribute("id", name));
-            fieldElement.Value = value.Value.ToString("yyyy-MM-dd");
+            fieldElement.Value = value.Value.ToString(Constants.BambooHrDateFormat);
 
             xElement.Add(fieldElement);
         }
