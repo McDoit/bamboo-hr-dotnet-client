@@ -4,15 +4,6 @@
 
 A .NET client for the BambooHR REST API.
 
-
-## NOTICE:
-
-**Bamboo HR recently removed support for SSLv3 and TLSv1.0, so if you're running .Net < 4.6.1, you'll need to add this line to your application somewhere, probably inside Application_Start() in your Global.asax.  Keep in mind that this is a global change to your applcation.  If there are any other calls you make to HTTPS endpoints that only support SSLv3, they will stop working.  Most services probably don't even support SSLv3 anymore anyway, [read this CloudFlare post for more information on the subject](https://blog.cloudflare.com/sslv3-support-disabled-by-default-due-to-vulnerability/).  Thanks goes to the Nifty [Nick Craver](http://nickcraver.com/) for the fix.**
-
-    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls |
-        SecurityProtocolType.Tls11 |
-        SecurityProtocolType.Tls12;
-
 ## Getting Started
 
 A **demo project** is included!
@@ -23,18 +14,11 @@ A **demo project** is included!
 4. Bask in the gloriously incandescent data gifted unto to you by your affordable and friendly HR system.
 
 
-## Config (Just to spell it out)
+## Config
 
-For the demo project, make sure you update the App.Config with your API stuffs.  It will look something like this:
+Create an implementation of the `IBambooHrClientConfig` interface
 
-    <add key="BambooApiUser" value="email@example.com" />
-    <add key="BambooApiKey" value="sadjlksdfguoi45u498j0sdfjoiksdfj08sdf" />
-    <add key="BambooApiUrl" value="https://api.bamboohr.com/api/gateway.php/examplecompanyname/v1" />
-    <add key="BambooCompanyUrl" value="https://examplecompanyname.bamboohr.com" />
-
-If you're using this in the context of a web application project or website project, just add those lines to the `<appSettings>` section of your web.config.
-
-At some point, I may provide a programmatic way to configure this information for use in other scenarios???  What **are** those other scenarios!?!?!?
+The demo project includes a example implementation
 
 
 ## API Coverage
@@ -91,6 +75,7 @@ Here is a probably-mostly-up-to-date list of implemented API calls:
     - [x] - Get a list of users
 - [x] - Last Change Information
 - [ ] - Login
+- [ ] - Webhooks
 
 
 ## Caveats/Notes
@@ -101,9 +86,9 @@ This library doesn't do any caching for you, make sure you don't spam the API an
 
 ## Credit
 
-Thanks to Stack Overflow for letting me (John Bubriski) open source this code.
+Thanks to Stack Overflow for letting the original creater (John Bubriski) open source this code.
 
 
 ## License
 
-MIT, but check the LICENSE file in case I'm trolling you.
+MIT

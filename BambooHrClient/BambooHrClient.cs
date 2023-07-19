@@ -82,7 +82,7 @@ namespace BambooHrClient
             _config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
-        public Task<List<Dictionary<string, string>>> GetTabularData(string employeeId, BambooHrTableType tableType)
+        public Task<List<Dictionary<string, string>>> GetTabularData(string? employeeId, BambooHrTableType tableType)
         {
             var url = string.Format("/employees/{0}/tables/{1}/", employeeId, tableType.ToString().LowerCaseFirstLetter());
 
@@ -280,6 +280,11 @@ namespace BambooHrClient
 
         public async Task<Byte[]> GetEmployeePhoto(int employeeId, string size = "small")
         {
+            if (String.IsNullOrWhiteSpace(size))
+            {
+                throw new ArgumentException($"'{nameof(size)}' cannot be null or whitespace.", nameof(size));
+            }
+
             var url = string.Format("/employees/{0}/photo/{1}", employeeId, size);
 
             var request = GetNewRestRequest(url, Method.Get, true);
@@ -411,7 +416,7 @@ namespace BambooHrClient
         /// <param name="holidays">Holidays that apply to the supplied date range.</param>
         /// <param name="previousTimeOffRequestId"></param>
         /// <returns></returns>
-        public async Task<int> CreateTimeOffRequest(int employeeId, int timeOffTypeId, DateTime startDate, DateTime endDate, bool startHalfDay = false, bool endHalfDay = false, string comment = null, List<DateTime> holidays = null, int? previousTimeOffRequestId = null)
+        public async Task<int> CreateTimeOffRequest(int employeeId, int timeOffTypeId, DateTime startDate, DateTime endDate, bool startHalfDay = false, bool endHalfDay = false, string? comment = null, List<DateTime> holidays = null, int? previousTimeOffRequestId = null)
         {
             var url = string.Format("/employees/{0}/time_off/request", employeeId);
 
@@ -533,7 +538,7 @@ namespace BambooHrClient
             throw new Exception("Bamboo Response does not contain data.");
         }
 
-        public async Task<bool> CancelTimeOffRequest(int timeOffRequestId, string reason = null)
+        public async Task<bool> CancelTimeOffRequest(int timeOffRequestId, string? reason = null)
         {
             var url = string.Format("time_off/requests/{0}/status/", timeOffRequestId);
 
@@ -795,7 +800,7 @@ namespace BambooHrClient
         public Func<HttpResponseMessage, ValueTask>? OnAfterRequest { get; set; }
 
 
-        private RestRequest GetNewRestRequest(string url, Method method, bool sendingJson, bool binary = false)
+        private RestRequest GetNewRestRequest(string? url, Method method, bool sendingJson, bool binary = false)
         {
             var request = new RestRequest(url, method);
 
@@ -879,7 +884,7 @@ namespace BambooHrClient
             return xml;
         }
 
-        private static string XmlEscape(string unescaped)
+        private static string XmlEscape(string? unescaped)
         {
             var doc = new XmlDocument();
             var node = doc.CreateElement("root");

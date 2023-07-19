@@ -22,12 +22,18 @@
 
 	<PropertyGroup>
 		<PackageId>McDoit.BambooHrClient</PackageId>
-		<Version>0.0.8</Version>
+		<Version>0.0.9</Version>
 		<Authors>McDoit</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<RepositoryUrl>https://github.com/McDoit/bamboo-hr-dotnet-client</RepositoryUrl>
 		<PackageTags>bamboohr sdk</PackageTags>
 		<Description>
 			Based on https://github.com/jbubriski/bamboo-hr-dotnet-client this package provides a SDK for the BambooHr API using RestSharp
 		</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 </Project>

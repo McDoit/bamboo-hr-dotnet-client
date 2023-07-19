@@ -15,8 +15,8 @@ namespace BambooHrClient
 
         Task<List<BambooHrTimeOffRequest>> GetTimeOffRequests(int employeeId);
         Task<BambooHrTimeOffRequest> GetTimeOffRequest(int timeOffRequestId);
-        Task<int> CreateTimeOffRequest(int employeeId, int timeOffTypeId, DateTime startDate, DateTime endDate, bool startHalfDay = false, bool endHalfDay = false, string comment = null, List<DateTime> holidays = null, int? previousTimeOffRequestId = null);
-        Task<bool> CancelTimeOffRequest(int timeOffRequestId, string reason = null);
+        Task<int> CreateTimeOffRequest(int employeeId, int timeOffTypeId, DateTime startDate, DateTime endDate, bool startHalfDay = false, bool endHalfDay = false, string? comment = null, List<DateTime> holidays = null, int? previousTimeOffRequestId = null);
+        Task<bool> CancelTimeOffRequest(int timeOffRequestId, string? reason = null);
         Task<List<BambooHrAssignedTimeOffPolicy>> GetAssignedTimeOffPolicies(int employeeId);
         Task<List<BambooHrEstimate>> GetFutureTimeOffBalanceEstimates(int employeeId, DateTime? endDate = null);
         Task<List<BambooHrWhosOutInfo>> GetWhosOut(DateTime? startDate = null, DateTime? endDate = null);
