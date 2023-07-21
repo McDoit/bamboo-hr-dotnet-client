@@ -800,7 +800,7 @@ namespace BambooHrClient
         public Func<HttpResponseMessage, ValueTask>? OnAfterRequest { get; set; }
 
 
-        private RestRequest GetNewRestRequest(string? url, Method method, bool sendingJson, bool binary = false)
+        private RestRequest GetNewRestRequest(string url, Method method, bool sendingJson, bool binary = false)
         {
             var request = new RestRequest(url, method);
 
@@ -892,6 +892,37 @@ namespace BambooHrClient
             node.InnerText = unescaped;
 
             return node.InnerXml;
+        }
+
+        public Task<BambooHrWebhook> GetWebhook(string id)
+        {
+            const string url = "/webhooks/{id}/";
+
+            var request = GetNewRestRequest(url, Method.Get, true);
+
+            request.AddUrlSegment("id", id);
+
+            return GetDataResponse<BambooHrWebhook>(request);
+        }
+
+        public Task<BambooHrField[]> GetWebhookMonitorFields()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteWebhook(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<BambooHrWebhook> AddWebhook(BambooHrWebhook webhook)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<BambooHrWebhook> UpdateWebhook(BambooHrWebhook webhook)
+        {
+            throw new NotImplementedException();
         }
     }
 }
