@@ -118,9 +118,11 @@ namespace BambooHrClient.Demo
             Console.ReadLine();
         }
 
+        private static BambooHrClient BambooHrClient() => new(BambooHrClientConfigurationManagerConfig.Instance);
+
         private async static void DisplayEmployeeInfos()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var employees = await bambooHrClient.GetEmployees();
 
@@ -136,7 +138,7 @@ namespace BambooHrClient.Demo
 
         private async static void AddEmployee(string firstName, string lastName, string workEmail)
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var bambooHrEmployee = new BambooHrEmployee
             {
@@ -153,17 +155,37 @@ namespace BambooHrClient.Demo
 
         private async static Task<BambooHrEmployee> GetEmployee(int employeeId)
         {
-            var bambooHrClient = new BambooHrClient();
-            var employee = await bambooHrClient.GetEmployee(employeeId);
+            var bambooHrClient = BambooHrClient();
+
+            var fields = await bambooHrClient.GetFields(); //TODO broken, return ALL fields for every type
+
+            var employee = await bambooHrClient.GetEmployee(employeeId, BambooHrEmployee.FieldNames);
 
             Console.WriteLine($"Got employee with ID {employee.Id}");
 
             return employee;
         }
 
+        private async static Task<Dictionary<string, dynamic>[]> GetReport(int reportId)
+        {
+            var bambooHrClient = BambooHrClient();
+
+            var report = await bambooHrClient.GetReport<Dictionary<string, dynamic>>(reportId);
+            //var report = await bambooHrClient.GetReport<IMPLEMENTATION_CLASS>(reportId);
+
+            //Use the following data to create a implemenation och the report fields
+            var props = report.Fields.Select(s => $"[JsonProperty(\"{s.Id}\")]{Environment.NewLine}public {s.Type} {s.Name.Replace(" ", "")} {{ get; set; }}");
+
+            var classContent = String.Join(Environment.NewLine, props);
+
+            Console.WriteLine(classContent);
+
+            return report.Employees;
+        }
+
         private async static Task<bool> UpdateEmployee(BambooHrEmployee bambooHrEmployee)
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
             await bambooHrClient.UpdateEmployee(bambooHrEmployee);
 
             Console.WriteLine($"Updated employee with ID {bambooHrEmployee.Id}");
@@ -173,7 +195,7 @@ namespace BambooHrClient.Demo
 
         private async static Task DisplayTabluarData(int employeeId, BambooHrTableType tableType)
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var data = await bambooHrClient.GetTabularData(employeeId.ToString(), tableType);
 
@@ -188,7 +210,7 @@ namespace BambooHrClient.Demo
 
         private async static Task DisplayAssignedTimeOffPolicies(int employeeId)
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var timeOffPolicies = await bambooHrClient.GetAssignedTimeOffPolicies(employeeId);
 
@@ -200,7 +222,7 @@ namespace BambooHrClient.Demo
 
         private async static Task DisplayFutureTimeOffBalanceEstimates(int employeeId)
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var estimates = await bambooHrClient.GetFutureTimeOffBalanceEstimates(employeeId);
 
@@ -212,7 +234,7 @@ namespace BambooHrClient.Demo
 
         private async static Task DisplayWhosOut()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var whosOut = await bambooHrClient.GetWhosOut();
 
@@ -224,7 +246,7 @@ namespace BambooHrClient.Demo
 
         private async static Task DownloadEmployeePhoto(int employeeId)
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var fileData = await bambooHrClient.GetEmployeePhoto(employeeId);
 
@@ -235,7 +257,7 @@ namespace BambooHrClient.Demo
 
         private static void DisplayEmployeePhotoUrl(string workEmail)
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var photoUrl = bambooHrClient.GetEmployeePhotoUrl(workEmail);
 
@@ -244,7 +266,7 @@ namespace BambooHrClient.Demo
 
         private async static Task UploadloadEmployeePhoto(int employeeId)
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var binaryData = File.ReadAllBytes(@"C:\test.jpeg");
 
@@ -255,7 +277,7 @@ namespace BambooHrClient.Demo
 
         private async static Task DisplayFields()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var fields = await bambooHrClient.GetFields();
 
@@ -267,7 +289,7 @@ namespace BambooHrClient.Demo
 
         private async static Task DisplayTabularFields()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var tables = await bambooHrClient.GetTabularFields();
 
@@ -285,7 +307,7 @@ namespace BambooHrClient.Demo
 
         private async static Task DisplayListFieldDetails()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var fields = await bambooHrClient.GetListFieldDetails();
 
@@ -308,7 +330,7 @@ namespace BambooHrClient.Demo
                 new BambooHrListFieldOption { Value="New Option" }
             };
 
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var results = await bambooHrClient.AddOrUpdateListValues(listId, values);
 
@@ -317,7 +339,7 @@ namespace BambooHrClient.Demo
 
         public async static Task DisplayTimeOffTypes()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var timeOffInfo = await bambooHrClient.GetTimeOffTypes();
 
@@ -336,7 +358,7 @@ namespace BambooHrClient.Demo
 
         public async static Task DisplayTimeOffTypesByPermissions()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var timeOffInfo = await bambooHrClient.GetTimeOffTypes("request");
 
@@ -355,7 +377,7 @@ namespace BambooHrClient.Demo
 
         public async static Task DisplayTimeOffPolicies()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var timeOffPolicies = await bambooHrClient.GetTimeOffPolicies();
 
@@ -367,7 +389,7 @@ namespace BambooHrClient.Demo
 
         public async static Task DisplayUsers()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var users = await bambooHrClient.GetUsers();
 
@@ -379,7 +401,7 @@ namespace BambooHrClient.Demo
 
         public async static Task DisplayLastChangedInfo()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var users = await bambooHrClient.GetLastChangedInfo(DateTime.Now.AddDays(-7));
 
@@ -391,7 +413,7 @@ namespace BambooHrClient.Demo
 
         public async static void ListHolidays()
         {
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var holidays = await bambooHrClient.GetHolidays(DateTime.Now, DateTime.Now.AddYears(1));
 
@@ -410,7 +432,7 @@ namespace BambooHrClient.Demo
 
             var timeOffTypeId = GetTimeOffTypeId(reason);
 
-            var bambooHrClient = new BambooHrClient();
+            var bambooHrClient = BambooHrClient();
 
             var employee = bambooHrClient.GetEmployee(userId);
 
