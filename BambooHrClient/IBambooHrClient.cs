@@ -43,12 +43,10 @@ namespace BambooHrClient
         Task<BambooHrEmployeeChangedInfo[]> GetLastChangedInfo(DateTime lastChanged, string type = "");
         Task<BambooHrReport<T>> GetReport<T>(int reportId);
 
-        Task<BambooHrWebhook> GetWebhook(string id);
-        Task<BambooHrField[]> GetWebhookMonitorFields();
+        Task<BambooHrUpdatedWebhook> GetWebhook(string id);
+        Task<BambooHrNewWebhook> AddWebhook(BambooHrWebhook webhook);
+        Task<BambooHrUpdatedWebhook> UpdateWebhook(BambooHrCreatedWebhook webhook);
         Task<bool> DeleteWebhook(string id);
-        Task<BambooHrWebhook> AddWebhook(BambooHrWebhook webhook);
-        Task<BambooHrWebhook> UpdateWebhook(BambooHrWebhook webhook);
-
-
+        Task<BambooHrField[]> GetWebhookMonitorFields();
     }
 }

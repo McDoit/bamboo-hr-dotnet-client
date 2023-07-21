@@ -894,7 +894,7 @@ namespace BambooHrClient
             return node.InnerXml;
         }
 
-        public Task<BambooHrWebhook> GetWebhook(string id)
+        public Task<BambooHrUpdatedWebhook> GetWebhook(string id)
         {
             const string url = "/webhooks/{id}/";
 
@@ -902,27 +902,51 @@ namespace BambooHrClient
 
             request.AddUrlSegment("id", id);
 
-            return GetDataResponse<BambooHrWebhook>(request);
+            return GetDataResponse<BambooHrUpdatedWebhook>(request);
         }
 
         public Task<BambooHrField[]> GetWebhookMonitorFields()
         {
-            throw new NotImplementedException();
+            const string url = "/webhooks/monitor_fields";
+
+            var request = GetNewRestRequest(url, Method.Get, true);            
+
+            return GetDataResponse<BambooHrField[]>(request);
         }
 
         public Task<bool> DeleteWebhook(string id)
         {
+            const string url = "/webhooks/{id}/";
+
+            var request = GetNewRestRequest(url, Method.Delete, false);
+
+            request.AddUrlSegment("id", id);
+
             throw new NotImplementedException();
         }
 
-        public Task<BambooHrWebhook> AddWebhook(BambooHrWebhook webhook)
+        public Task<BambooHrNewWebhook> AddWebhook(BambooHrWebhook webhook)
         {
-            throw new NotImplementedException();
+            const string url = "/webhooks/";
+
+            var request = GetNewRestRequest(url, Method.Post, false);
+
+            request.AddJsonBody(webhook);
+
+            return GetDataResponse<BambooHrNewWebhook>(request);
         }
 
-        public Task<BambooHrWebhook> UpdateWebhook(BambooHrWebhook webhook)
+        public Task<BambooHrUpdatedWebhook> UpdateWebhook(BambooHrCreatedWebhook webhook)
         {
-            throw new NotImplementedException();
+            const string url = "/webhooks/{id}/";
+
+            var request = GetNewRestRequest(url, Method.Put, false);
+
+            request.AddJsonBody((BambooHrWebhook)webhook);
+
+            request.AddUrlSegment("id", webhook.Id);
+
+            return GetDataResponse<BambooHrUpdatedWebhook>(request);
         }
     }
 }
