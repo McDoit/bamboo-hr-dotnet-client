@@ -32,7 +32,8 @@ Here is a probably-mostly-up-to-date list of implemented API calls:
         - [x] - Get an employee
         - [x] - Update an employee
         - [-] - Get a directory of employees (sort of, through custom report)
-    - [ ] - Reports
+    - [-] - Reports
+		- [x] - Get a report
         - [ ] - Request a company report
         - [ ] - Request a custom report
     - [ ] - Employee Files
@@ -76,7 +77,13 @@ Here is a probably-mostly-up-to-date list of implemented API calls:
     - [x] - Get a list of users
 - [x] - Last Change Information
 - [ ] - Login
-- [ ] - Webhooks
+- [x] - Webhooks
+	- [x] - Add an webhook
+	- [x] - Get an webhook
+	- [x] - Get all webhooks
+	- [x] - Update a webhook
+	- [x] - Delete a webhook	
+	- [x] - Get webhook monitor fields
 
 
 ## Caveats/Notes

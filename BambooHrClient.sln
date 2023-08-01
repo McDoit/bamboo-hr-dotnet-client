@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2015
 VisualStudioVersion = 14.0.22823.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BambooHrClient", "BambooHrClient\BambooHrClient.csproj", "{1C2BB32C-0D43-4C31-ABBA-42F3437A946E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BambooHrClient", "BambooHrClient\BambooHrClient.csproj", "{1C2BB32C-0D43-4C31-ABBA-42F3437A946E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BambooHrClient.Demo", "BambooHrClient.Demo\BambooHrClient.Demo.csproj", "{3C5DBA1B-869C-4AFD-BCC1-879B1719E87F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BambooHrClient.Demo", "BambooHrClient.Demo\BambooHrClient.Demo.csproj", "{3C5DBA1B-869C-4AFD-BCC1-879B1719E87F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

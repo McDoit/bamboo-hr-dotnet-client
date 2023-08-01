@@ -203,7 +203,6 @@ namespace BambooHrClient.Models
             "payRate",
             "payRateEffectiveDate",
             "payType",
-            "paidPer",
             "paySchedule",
             "payScheduleId",
             "payFrequency",

@@ -162,6 +162,30 @@ namespace BambooHrClient
             throw new Exception($"Bamboo Response threw error code {response.StatusCode} ({response.StatusDescription}) {response.GetBambooHrErrorMessage()} in {nameof(AddEmployee)}");
         }
 
+
+        public async Task<RestResponse> GetResponse(RestRequest restRequest)
+        {
+            RestResponse response;
+
+            try
+            {
+                response = await _restClient.ExecuteAsync(restRequest);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Error executing Bamboo request to {0}", restRequest.Resource), ex);
+            }
+
+            if (response.ErrorException != null)
+                throw new Exception(string.Format("Error executing Bamboo request to {0}", restRequest.Resource), response.ErrorException);
+
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                return response;
+            }
+
+            throw new Exception($"Bamboo Response threw error code {response.StatusCode} ({response.StatusDescription}) {response.GetBambooHrErrorMessage()} at {restRequest.Resource}");
+        }
         public async Task<T> GetDataResponse<T>(RestRequest restRequest)
         {
             RestResponse<T> response;
@@ -800,7 +824,7 @@ namespace BambooHrClient
         public Func<HttpResponseMessage, ValueTask>? OnAfterRequest { get; set; }
 
 
-        private RestRequest GetNewRestRequest(string? url, Method method, bool sendingJson, bool binary = false)
+        private RestRequest GetNewRestRequest(string url, Method method, bool sendingJson, bool binary = false)
         {
             var request = new RestRequest(url, method);
 
@@ -892,6 +916,107 @@ namespace BambooHrClient
             node.InnerText = unescaped;
 
             return node.InnerXml;
+        }
+
+        public Task<BambooHrWebhookList> GetWebhooks()
+        {
+            const string url = "/webhooks/";
+
+            var request = GetNewRestRequest(url, Method.Get, true);
+
+            return GetDataResponse<BambooHrWebhookList>(request);
+        }
+
+        public Task<BambooHrUpdatedWebhook> GetWebhook(int id)
+        {
+            const string url = "/webhooks/{id}/";
+
+            var request = GetNewRestRequest(url, Method.Get, true);
+
+            request.AddUrlSegment("id", id);
+
+            return GetDataResponse<BambooHrUpdatedWebhook>(request);
+        }
+
+        public Task<BambooHrWebhookMonitorFieldList> GetWebhookMonitorFields()
+        {
+            const string url = "/webhooks/monitor_fields";
+
+            var request = GetNewRestRequest(url, Method.Get, true);
+
+            request.OnBeforeRequest = async req =>
+            {
+                var con = await req.Content.ReadAsStringAsync();
+
+                Console.WriteLine(con);
+            };
+
+            request.OnAfterRequest = async res =>
+            {
+                var resString = await res.Content.ReadAsStringAsync();
+
+                Console.WriteLine(resString);
+            };
+
+            return GetDataResponse<BambooHrWebhookMonitorFieldList>(request);
+        }
+
+        public async Task<bool> DeleteWebhook(int id)
+        {
+            const string url = "/webhooks/{id}/";
+
+            var request = GetNewRestRequest(url, Method.Delete, false);
+
+            request.AddUrlSegment("id", id);
+
+            var resp = await GetResponse(request);
+
+            return resp.IsSuccessStatusCode;
+        }
+
+        public Task<BambooHrNewWebhook> AddWebhook(BambooHrWebhook webhook)
+        {
+            const string url = "/webhooks/";
+
+            var request = GetNewRestRequest(url, Method.Post, true);
+
+            request.AddJsonBody(webhook);
+
+            request.OnBeforeRequest = async req =>
+            {
+                var con = await req.Content.ReadAsStringAsync();
+
+                Console.WriteLine(con);
+            };
+
+            request.OnAfterRequest = async res =>
+            {
+                var resString = await res.Content.ReadAsStringAsync();
+
+                Console.WriteLine(resString);
+            };
+
+            return GetDataResponse<BambooHrNewWebhook>(request);
+        }
+
+        public Task<BambooHrUpdatedWebhook> UpdateWebhook(BambooHrCreatedWebhook webhook)
+        {
+            const string url = "/webhooks/{id}/";
+
+            var request = GetNewRestRequest(url, Method.Put, false);
+
+            request.AddJsonBody((BambooHrWebhook)webhook);
+
+            request.AddUrlSegment("id", webhook.Id);
+
+            request.OnBeforeRequest = async request => 
+            { 
+                var datas = await request.Content.ReadAsStringAsync();
+
+                Console.WriteLine(datas);
+            };
+
+            return GetDataResponse<BambooHrUpdatedWebhook>(request);
         }
     }
 }
